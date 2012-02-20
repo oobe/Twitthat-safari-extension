@@ -1,0 +1,42 @@
+<!doctype html>
+<html>
+<head><title>Twitthat extension</title>
+<script type="text/javascript" charset="utf-8">
+	
+	function performCommand (event) {
+	
+		console.log("Performing ", event.command);
+		switch (event.command) {
+			case "twitThat": {
+				
+				var theURL = encodeURIComponent(safari.application.activeBrowserWindow.activeTab.url);
+				var theTitle = encodeURIComponent(safari.application.activeBrowserWindow.activeTab.title.replace(/^\s*|\s*$/g,''));
+				
+				console.log('The title:', theTitle);
+				
+				var messageArr = {'theURL' : theURL, 'theTitle' : theTitle};
+				safari.application.activeBrowserWindow.activeTab.page.dispatchMessage("tt-didRequestPost",messageArr);
+				
+				break;
+			}
+			
+			default: {
+				if (console) {
+					console.log("performCommand got unknown command", event.name);
+				}
+				break;
+			}
+		}
+ 
+	}
+	
+	function validateCommand (event) {
+		if (event.target.identifier == "twitThat") {
+	        event.target.disabled = !safari.application.activeBrowserWindow.activeTab.url;
+		}
+	}
+	
+	safari.application.addEventListener("command", performCommand, true);
+	safari.application.addEventListener("validate", validateCommand, true);
+</script>
+</head><body></body></html>
